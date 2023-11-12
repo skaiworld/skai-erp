@@ -6,9 +6,13 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
+    depends_on:
+      - db
     volumes:
       - sites:/home/frappe/frappe-bench/sites
       - logs:/home/frappe/frappe-bench/logs
+    expose:
+      - 8000
 
   create-site:
     image: ghcr.io/skaiworld/skai-erp:v15
@@ -78,6 +82,8 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
+    depends_on:
+      - backend
     command:
       - nginx-entrypoint.sh
     environment:
@@ -100,6 +106,8 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
+    depends_on:
+      - backend
     command:
       - worker.sh
     volumes:
@@ -127,12 +135,16 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
+    depends_on:
+      - backend
     command:
       - node
       - /home/frappe/frappe-bench/apps/frappe/socketio.js
     volumes:
       - sites:/home/frappe/frappe-bench/sites
       - logs:/home/frappe/frappe-bench/logs
+    expose:
+      - 9000
 
 volumes:
   db-data:
