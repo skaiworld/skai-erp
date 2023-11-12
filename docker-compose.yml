@@ -6,6 +6,8 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
+    depends_on:
+      - db
     volumes:
       - sites:/home/frappe/frappe-bench/sites
       - logs:/home/frappe/frappe-bench/logs
@@ -78,6 +80,8 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
+    depends_on:
+      - backend
     command:
       - nginx-entrypoint.sh
     environment:
@@ -100,6 +104,8 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
+    depends_on:
+      - backend
     command:
       - worker.sh
     volumes:
@@ -127,6 +133,8 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
+    depends_on:
+      - backend
     command:
       - node
       - /home/frappe/frappe-bench/apps/frappe/socketio.js
