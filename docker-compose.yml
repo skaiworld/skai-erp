@@ -11,6 +11,8 @@ services:
     volumes:
       - sites:/home/frappe/frappe-bench/sites
       - logs:/home/frappe/frappe-bench/logs
+    expose:
+      - 8000
 
   create-site:
     image: ghcr.io/skaiworld/skai-erp:v15
@@ -141,6 +143,8 @@ services:
     volumes:
       - sites:/home/frappe/frappe-bench/sites
       - logs:/home/frappe/frappe-bench/logs
+    expose:
+      - 9000
 
 volumes:
   db-data:
