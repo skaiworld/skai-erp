@@ -3,7 +3,6 @@ version: "3"
 services:
   backend:
     image: ghcr.io/skaiworld/skai-erp:v15
-    platform: linux/arm64/v8
     deploy:
       restart_policy:
         condition: on-failure
@@ -13,7 +12,6 @@ services:
 
   create-site:
     image: ghcr.io/skaiworld/skai-erp:v15
-    platform: linux/arm64/v8
     deploy:
       restart_policy:
         condition: none
@@ -77,7 +75,6 @@ services:
 
   frontend:
     image: ghcr.io/skaiworld/skai-erp:v15
-    platform: linux/arm64/v8
     deploy:
       restart_policy:
         condition: on-failure
@@ -100,7 +97,6 @@ services:
 
   worker:
     image: ghcr.io/skaiworld/skai-erp:v15
-    platform: linux/arm64/v8
     deploy:
       restart_policy:
         condition: on-failure
@@ -128,7 +124,6 @@ services:
 
   websocket:
     image: ghcr.io/skaiworld/skai-erp:v15
-    platform: linux/arm64/v8
     deploy:
       restart_policy:
         condition: on-failure
@@ -142,6 +137,12 @@ services:
 volumes:
   db-data:
   redis-queue-data:
+    driver_opts:
+      size: 0.2Gi
   redis-cache-data:
+    driver_opts:
+        size: 0.2Gi
   sites:
   logs:
+    driver_opts:
+        size: 0.1Gi

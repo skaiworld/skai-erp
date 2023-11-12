@@ -4,6 +4,5 @@ SKAI Technologies ERP System
 
 ## Installation
 
-- Run `/bin/bash ./build`
-- Push image to Container registry
-- Use docker compose to deploy
+- Push latest `main` branch to build and push docker image via github actions.
+- Use docker compose to deploy.
