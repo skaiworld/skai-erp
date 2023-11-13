@@ -149,12 +149,6 @@ services:
 volumes:
   db-data:
   redis-queue-data:
-    driver_opts:
-      size: 0.2Gi
   redis-cache-data:
-    driver_opts:
-        size: 0.2Gi
   sites:
   logs:
-    driver_opts:
-        size: 0.1Gi
