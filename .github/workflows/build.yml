@@ -3,7 +3,9 @@ name: Build and Push Docker Image
 on:
   push:
     branches:
-      - 'main'
+      - 'develop'
+    tags:
+      - 'v[0-9]+.*'
 
 jobs:
   docker:
@@ -42,4 +44,4 @@ jobs:
             NODE_VERSION=18.18.2
             APPS_JSON_BASE64=${{ env.APPS_JSON_BASE64 }}
           push: true
-          tags: ghcr.io/${{ github.repository }}:v15
+          tags: ghcr.io/${{ github.repository }}:${{ github.ref_name }}
