@@ -12,6 +12,14 @@
 		"branch": "version-15"
 	},
 	{
+		"url": "https://github.com/resilient-tech/india-compliance",
+		"branch": "version-15"
+	},
+	{
+		"url": "https://github.com/frappe/wiki",
+		"branch": "master"
+	},
+	{
 		"url": "https://github.com/skaiworld/skaiui",
 		"branch": "develop"
 	}

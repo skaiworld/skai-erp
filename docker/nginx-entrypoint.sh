@@ -10,16 +10,6 @@ if [[ -z "$SOCKETIO" ]]; then
   export SOCKETIO=0.0.0.0:9000
 fi
 
-if [[ -z "$SYNAPSE_SERVER" ]]; then
-  echo "SYNAPSE_SERVER defaulting to 0.0.0.0:8008"
-  export SYNAPSE_SERVER=0.0.0.0:8008
-fi
-
-if [[ -z "$ELEMENT_SERVER" ]]; then
-  echo "ELEMENT_SERVER defaulting to 0.0.0.0:8080"
-  export ELEMENT_SERVER=0.0.0.0:8080
-fi
-
 if [[ -z "$UPSTREAM_REAL_IP_ADDRESS" ]]; then
   echo "UPSTREAM_REAL_IP_ADDRESS defaulting to 127.0.0.1"
   export UPSTREAM_REAL_IP_ADDRESS=127.0.0.1
@@ -52,8 +42,6 @@ fi
 # shellcheck disable=SC2016
 envsubst '${BACKEND}
   ${SOCKETIO}
-  ${SYNAPSE_SERVER}
-  ${ELEMENT_SERVER}
   ${UPSTREAM_REAL_IP_ADDRESS}
   ${UPSTREAM_REAL_IP_HEADER}
   ${UPSTREAM_REAL_IP_RECURSIVE}

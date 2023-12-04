@@ -8,6 +8,7 @@ SKAI Technologies ERP System
 - Add app details to `docker/apps.json` in this repo
 
 ## Testing
+Copy `example.env` to `.env`
 ```
 APPS_JSON_BASE64=$(openssl base64 -in docker/apps.json) # Mac
 # APPS_JSON_BASE64=$(base64 -w 0 docker/apps.json) # Linux
@@ -20,7 +21,7 @@ docker build \
   --build-arg=APPS_JSON_BASE64=$APPS_JSON_BASE64 \
   --tag=ghcr.io/skaiworld/skai-erp:v15 docker
 
-docker compose up
+docker compose -f docker.base.yml -f docker.dev.yml up -d
 ```
 Check http://localhost
 
@@ -28,9 +29,10 @@ Check http://localhost
 
 SKAI ERP can be deployed to production server via docker. Choose an Ubuntu VM or docker hosting that supports `docker-compose.yml`
 
-- Push `deevelop` branch or `v*` tag to Github to build and push docker image via github actions.
-- Copy Docker compose file `scp docker-compose.yml ubuntu@ip:~/`
+- Push `develop` branch or `v*` tag to Github to build and push docker image via github actions.
+- Copy files `scp docker.base.yml docker.prod.yml .env ubuntu@ip:~/`
 - ssh into Ubuntu machine `ssh ubuntu@ip`
+- Edit `.env` file
 - Install docker - Run:
   ```
   sudo apt-get update
@@ -43,5 +45,5 @@ SKAI ERP can be deployed to production server via docker. Choose an Ubuntu VM or
   sudo usermod -aG docker ${USER}
   sudo su - ${USER}
   ```
-- Run `docker compose up -d`
+- Run `docker compose -f docker.base.yml -f docker.prod.yml up -d`
 - Open port 80 to users

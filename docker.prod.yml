@@ -1,0 +1,37 @@
+version: "3"
+
+services:
+  synapse:
+    extends:
+      file: docker-compose.base.yml
+      service: synapse
+    labels:
+      - traefik.http.routers.matrix-http.entrypoints=websecure
+      - traefik.http.routers.matrix-http.tls.certresolver=le
+
+  frontend:
+    extends:
+      file: docker.base.yml
+      service: frontend
+    labels:
+      - traefik.http.routers.frontend-http.entrypoints=websecure
+      - traefik.http.routers.frontend-http.tls.certresolver=le
+
+  proxy:
+    extends:
+      file: docker.base.yml
+      service: proxy
+    command:
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
+      - --entrypoints.websecure.address=:443
+      - --entrypoints.matrix.address=:8008
+      - --certificatesresolvers.le.acme.tlschallenge=true
+      - --certificatesResolvers.le.acme.email=${EMAIL}
+      - --certificatesResolvers.le.acme.storage=/letsencrypt/acme.json
+      - --api.dashboard=false
+    volumes:
+      - ./cert-data:/letsencrypt
