@@ -3,7 +3,7 @@ version: "3"
 services:
   synapse:
     extends:
-      file: docker-compose.base.yml
+      file: docker.base.yml
       service: synapse
     labels:
       - traefik.http.routers.matrix-http.entrypoints=websecure

@@ -60,8 +60,6 @@ services:
         done;
         echo "sites/common_site_config.json found";
         bench new-site --no-mariadb-socket --admin-password=$$ADMIN_PASSWORD --db-root-password=$$DB_PASSWORD --install-app skaiui --set-default $$FRAPPE_SITE_NAME_HEADER;
-        bench install-app india_compliance;
-        bench install-app wiki;
 
   db:
     image: mariadb:10.6
@@ -144,7 +142,7 @@ services:
       - postgres
     volumes:
       - synapse-data:/data
-      - ./docker/configurator.py:/configurator.py
+      - ./configurator.py:/configurator.py
     environment:
       - SYNAPSE_SERVER_NAME=${DOMAIN}
       - SYNAPSE_REPORT_STATS=no
