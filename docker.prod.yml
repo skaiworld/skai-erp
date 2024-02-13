@@ -7,6 +7,7 @@ services:
       service: synapse
     labels:
       - traefik.http.routers.matrix-http.entrypoints=websecure
+      - traefik.http.routers.matrix-http.tls=true
       - traefik.http.routers.matrix-http.tls.certresolver=le
 
   frontend:
@@ -15,6 +16,7 @@ services:
       service: frontend
     labels:
       - traefik.http.routers.frontend-http.entrypoints=websecure
+      - traefik.http.routers.frontend-http.tls=true
       - traefik.http.routers.frontend-http.tls.certresolver=le
 
   proxy:
@@ -29,9 +31,13 @@ services:
       - --entrypoints.web.http.redirections.entrypoint.scheme=https
       - --entrypoints.websecure.address=:443
       - --entrypoints.matrix.address=:8008
+      - --entrypoints.dash.address=:8080
+      - --certificatesresolvers.le.acme.caserver=https://acme-v02.api.letsencrypt.org/directory
       - --certificatesresolvers.le.acme.tlschallenge=true
       - --certificatesResolvers.le.acme.email=${EMAIL}
       - --certificatesResolvers.le.acme.storage=/letsencrypt/acme.json
-      - --api.dashboard=false
+      - --log
+      - --api=true
+      - --api.dashboard=true
     volumes:
       - ./cert-data:/letsencrypt

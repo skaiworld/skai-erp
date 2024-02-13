@@ -45,6 +45,9 @@ SKAI ERP can be deployed to production server via docker. Choose an Ubuntu VM or
   sudo apt install docker-ce -y
   sudo usermod -aG docker ${USER}
   sudo su - ${USER}
+
+  # Temporary: Disable firewall
+  # https://www.cyberciti.biz/tips/linux-iptables-how-to-flush-all-rules.html
   ```
 - Run `docker compose -f docker.base.yml -f docker.prod.yml up -d`
 - Open port 80 to users

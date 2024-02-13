@@ -5,5 +5,3 @@ services:
     extends:
       file: docker.base.yml
       service: proxy
-    ports:
-      - 8080:8080

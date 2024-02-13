@@ -209,16 +209,26 @@ services:
       - --providers.docker.exposedbydefault=false
       - --entrypoints.web.address=:80
       - --entrypoints.matrix.address=:8008
+      - --entrypoints.dash.address=:8080
       - --accesslog
       - --log
+      - --api=true
       - --api.dashboard=true
-      - --api.insecure=true
+
     ports:
       - 80:80
       - 443:443
       - 8008:8008
+      - 8080:8080
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.dash.entryPoints=dash
+      - traefik.http.routers.dash.rule=HostRegexp(`{any:.+}`)
+      - traefik.http.routers.dash.service=api@internal
+      - traefik.http.routers.dash.middlewares=dash-auth@docker
+      - traefik.http.middlewares.dash-auth.basicauth.users=${TRAEFIK_PASS}
 
 volumes:
   db-data:
