@@ -9,6 +9,7 @@ if [[ -z "$SOCKETIO" ]]; then
   echo "SOCKETIO defaulting to 0.0.0.0:9000"
   export SOCKETIO=0.0.0.0:9000
 fi
+
 if [[ -z "$UPSTREAM_REAL_IP_ADDRESS" ]]; then
   echo "UPSTREAM_REAL_IP_ADDRESS defaulting to 127.0.0.1"
   export UPSTREAM_REAL_IP_ADDRESS=127.0.0.1
