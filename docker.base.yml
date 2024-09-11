@@ -60,6 +60,7 @@ services:
         done;
         echo "sites/common_site_config.json found";
         bench new-site --no-mariadb-socket --admin-password=$$ADMIN_PASSWORD --db-root-password=$$DB_PASSWORD --install-app skaiui --set-default $$FRAPPE_SITE_NAME_HEADER;
+        bench migrate;
 
   db:
     image: mariadb:10.6
@@ -131,10 +132,10 @@ services:
     volumes:
       - postgresdata:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=synapse
-      - POSTGRES_USER=synapse
-      - POSTGRES_PASSWORD=${PG_PASSWORD}
-      - POSTGRES_INITDB_ARGS=--encoding='UTF8' --lc-collate='C' --lc-ctype='C'
+      POSTGRES_DB: synapse
+      POSTGRES_USER: synapse
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+      POSTGRES_INITDB_ARGS: --encoding='UTF8' --lc-collate='C' --lc-ctype='C'
 
   create-synapse:
     image: matrixdotorg/synapse:v1.97.0
@@ -144,17 +145,21 @@ services:
       - synapse-data:/data
       - ./configurator.py:/configurator.py
     environment:
-      - SYNAPSE_SERVER_NAME=${DOMAIN}
-      - SYNAPSE_REPORT_STATS=no
-      - PG_PASSWORD=${PG_PASSWORD}
-      - SYNAPSE_ADMIN=${SYNAPSE_ADMIN}
-      - SYNAPSE_PASSWORD=${SYNAPSE_PASSWORD}
+      SYNAPSE_SERVER: ${SYNAPSE_SERVER}
+      SYNAPSE_SERVER_NAME: ${DOMAIN}
+      SYNAPSE_REPORT_STATS: no
+      PG_PASSWORD: ${PG_PASSWORD}
+      SYNAPSE_ADMIN: ${SYNAPSE_ADMIN}
+      SYNAPSE_PASSWORD: ${SYNAPSE_PASSWORD}
+      SYNAPSE_SMTP_HOST: ${SYNAPSE_SMTP_HOST}
+      SYNAPSE_SMTP_USER: ${SYNAPSE_SMTP_USER}
+      SYNAPSE_SMTP_PASS: ${SYNAPSE_SMTP_PASS}
     entrypoint:
       - bash
       - -c
     command:
       - >
-        python3 /configurator.py;
+        python3 /configurator.py synapse;
 
   synapse:
     image: matrixdotorg/synapse:v1.97.0
@@ -168,7 +173,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.services.matrix.loadbalancer.server.port=8008
-      - traefik.http.routers.matrix-http.rule=Host(`${DOMAIN}`) && (PathPrefix(`/_matrix`) || PathPrefix(`/_synapse/client`))
+      - traefik.http.routers.matrix-http.rule=Host(`${DOMAIN}`) && (PathPrefix(`/_matrix`) || PathPrefix(`/_synapse`))
       - traefik.http.routers.matrix-http.entrypoints=matrix
       - traefik.http.routers.matrix-http.service=matrix
       - traefik.http.routers.matrix-http.priority=2
@@ -180,8 +185,13 @@ services:
         condition: on-failure
     depends_on:
       - backend
+    entrypoint:
+      - bash
+      - -c
     command:
-      - nginx-entrypoint.sh
+      - >
+        python3 /configurator.py element;
+        nginx-entrypoint.sh;
     environment:
       BACKEND: backend:8000
       SOCKETIO: websocket:9000
@@ -191,9 +201,11 @@ services:
       UPSTREAM_REAL_IP_RECURSIVE: ${UPSTREAM_REAL_IP_RECURSIVE:-off}
       PROXY_READ_TIMOUT: ${PROXY_READ_TIMOUT:-120}
       CLIENT_MAX_BODY_SIZE: ${CLIENT_MAX_BODY_SIZE:-50m}
+      SYNAPSE_SERVER: ${SYNAPSE_SERVER}
     volumes:
       - sites:/home/frappe/frappe-bench/sites
       - logs:/home/frappe/frappe-bench/logs
+      - ./configurator.py:/configurator.py
     labels:
       - traefik.enable=true
       - traefik.http.services.frontend.loadbalancer.server.port=8080

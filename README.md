@@ -16,7 +16,7 @@ APPS_JSON_BASE64=$(openssl base64 -in docker/apps.json) # Mac
 
 docker build \
   --build-arg=FRAPPE_PATH=https://github.com/frappe/frappe \
-  --build-arg=FRAPPE_BRANCH=version-15 \
+  --build-arg=FRAPPE_BRANCH=v15.40.4 \
   --build-arg=PYTHON_VERSION=3.11.6 \
   --build-arg=NODE_VERSION=18.18.2 \
   --build-arg=APPS_JSON_BASE64=$APPS_JSON_BASE64 \
@@ -50,4 +50,5 @@ SKAI ERP can be deployed to production server via docker. Choose an Ubuntu VM or
   # https://www.cyberciti.biz/tips/linux-iptables-how-to-flush-all-rules.html
   ```
 - Run `docker compose -f docker.base.yml -f docker.prod.yml up -d`
+- (Remove unused images `docker image prune -a`)
 - Open port 80 to users

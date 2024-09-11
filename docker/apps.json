@@ -5,15 +5,15 @@
 	},
 	{
 		"url": "https://github.com/frappe/erpnext",
-		"branch": "version-15"
+		"branch": "v15.34.2"
 	},
 	{
 		"url": "https://github.com/frappe/hrms",
-		"branch": "v15.4.1"
+		"branch": "v15.28.3"
 	},
 	{
 		"url": "https://github.com/resilient-tech/india-compliance",
-		"branch": "version-15"
+		"branch": "v15.13.2"
 	},
 	{
 		"url": "https://github.com/frappe/wiki",
@@ -21,6 +21,6 @@
 	},
 	{
 		"url": "https://github.com/skaiworld/skaiui",
-		"branch": "v1.0.0"
+		"branch": "v1.1.0"
 	}
 ]
