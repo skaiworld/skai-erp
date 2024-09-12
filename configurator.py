@@ -66,6 +66,55 @@ def configure_synapse():
 	config['account_threepid_delegates'] = {
 		'msisdn': 'https://vector.im'
 	}
+	config['encryption_enabled_by_default_for_room_type'] = 'off'
+	config['extra_well_known_client_content'] = {
+		'io.element.e2ee': {
+			'default': False,
+			'force_disable': True
+		}
+	}
+	config['serve_server_wellknown'] = True
+	config['default_power_level_content_override'] = {
+		'private_chat': {
+			'events': {
+				'm.room.avatar': 50,
+				'm.room.canonical_alias': 50,
+				'm.room.encryption': 999,
+				'm.room.history_visibility': 100,
+				'm.room.name': 50,
+				'm.room.power_levels': 100,
+				'm.room.server_acl': 100,
+				'm.room.tombstone': 100
+			},
+			'events_default': 0
+		},
+		'trusted_private_chat': {
+			'events': {
+				'm.room.avatar': 50,
+				'm.room.canonical_alias': 50,
+				'm.room.encryption': 999,
+				'm.room.history_visibility': 100,
+				'm.room.name': 50,
+				'm.room.power_levels': 100,
+				'm.room.server_acl': 100,
+				'm.room.tombstone': 100
+			},
+			'events_default': 0
+		},
+		'public_chat': {
+			'events': {
+				'm.room.avatar': 50,
+				'm.room.canonical_alias': 50,
+				'm.room.encryption': 999,
+				'm.room.history_visibility': 100,
+				'm.room.name': 50,
+				'm.room.power_levels': 100,
+				'm.room.server_acl': 100,
+				'm.room.tombstone': 100
+			},
+			'events_default': 0
+		}
+	}
 
 	with io.open( '/data/homeserver.yaml', 'w', encoding='utf8' ) as ofile:
 		yaml.dump( config, ofile, default_flow_style=False, allow_unicode=True )
