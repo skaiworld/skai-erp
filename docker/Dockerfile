@@ -10,7 +10,7 @@ ARG WKHTMLTOPDF_VERSION=0.12.6.1-3
 ARG WKHTMLTOPDF_DISTRO=bookworm
 ARG NODE_VERSION=18.18.2
 ENV NVM_DIR=/home/frappe/.nvm
-ENV PATH=${NVM_DIR}/versions/node/v${NODE_VERSION}/bin/:${PATH}
+ENV PATH ${NVM_DIR}/versions/node/v${NODE_VERSION}/bin/:${PATH}
 
 RUN useradd -ms /bin/bash frappe \
 	&& apt-get update \
@@ -20,7 +20,6 @@ RUN useradd -ms /bin/bash frappe \
 	vim \
 	nginx \
 	gettext-base \
-	file \
 	# weasyprint dependencies
 	libpango-1.0-0 \
 	libharfbuzz0b \
@@ -28,10 +27,8 @@ RUN useradd -ms /bin/bash frappe \
 	libpangocairo-1.0-0 \
 	# For backups
 	restic \
-	gpg \
 	# MariaDB
 	mariadb-client \
-	less \
 	# Postgres
 	libpq-dev \
 	postgresql-client \
@@ -80,12 +77,6 @@ RUN apt-get update \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
 	# For frappe framework
 	wget \
-	#for building arm64 binaries
-	libcairo2-dev \
-	libpango1.0-dev \
-	libjpeg-dev \
-	libgif-dev \
-	librsvg2-dev \
 	# For psycopg2
 	libpq-dev \
 	# Other
@@ -114,7 +105,7 @@ RUN if [ -n "${APPS_JSON_BASE64}" ]; then \
 
 USER frappe
 
-ARG FRAPPE_BRANCH=v15.40.4
+ARG FRAPPE_BRANCH=version-15
 ARG FRAPPE_PATH=https://github.com/frappe/frappe
 RUN export APP_INSTALL_ARGS="" && \
 	if [ -n "${APPS_JSON_BASE64}" ]; then \
@@ -142,7 +133,6 @@ WORKDIR /home/frappe/frappe-bench
 
 VOLUME [ \
 	"/home/frappe/frappe-bench/sites", \
-	"/home/frappe/frappe-bench/sites/assets", \
 	"/home/frappe/frappe-bench/logs" \
 	]
 
