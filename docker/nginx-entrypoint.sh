@@ -50,4 +50,6 @@ envsubst '${BACKEND}
 	${CLIENT_MAX_BODY_SIZE}' \
   </templates/nginx/frappe.conf.template >/etc/nginx/conf.d/frappe.conf
 
+bench_server.py &
+
 nginx -g 'daemon off;'

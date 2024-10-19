@@ -58,6 +58,7 @@ def configure_synapse():
 		'app_name': 'SKAI Chat',
 		'notif_from': f"%(app)s <{os.environ['SYNAPSE_SMTP_USER']}>",
 		'enable_notifs': True,
+		'notif_delay_before_mail': '1h',
 		'client_base_url': f"https://{os.environ['SYNAPSE_SERVER_NAME']}/element",
 		'invite_client_location': f"https://{os.environ['SYNAPSE_SERVER_NAME']}/element",
 	}
