@@ -188,7 +188,6 @@ services:
       - -c
     command:
       - >
-        bench build;
         python3 /configurator.py element;
         nginx-entrypoint.sh;
     environment:
@@ -200,6 +199,8 @@ services:
       UPSTREAM_REAL_IP_RECURSIVE: ${UPSTREAM_REAL_IP_RECURSIVE:-off}
       PROXY_READ_TIMOUT: ${PROXY_READ_TIMOUT:-120}
       CLIENT_MAX_BODY_SIZE: ${CLIENT_MAX_BODY_SIZE:-50m}
+      BENCH_SECRET: ${BENCH_SECRET}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
       SYNAPSE_SERVER: ${SYNAPSE_SERVER}
     volumes:
       - sites:/home/frappe/frappe-bench/sites

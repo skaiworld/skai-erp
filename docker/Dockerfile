@@ -5,6 +5,7 @@ FROM python:${PYTHON_VERSION}-slim-${DEBIAN_BASE} AS base
 COPY nginx-template.conf /templates/nginx/frappe.conf.template
 COPY nginx-entrypoint.sh /usr/local/bin/nginx-entrypoint.sh
 COPY worker.sh /usr/local/bin/worker.sh
+COPY bench_server.py /usr/local/bin/bench_server.py
 
 ARG WKHTMLTOPDF_VERSION=0.12.6.1-3
 ARG WKHTMLTOPDF_DISTRO=bookworm
@@ -69,7 +70,8 @@ RUN useradd -ms /bin/bash frappe \
 	&& chown -R frappe:frappe /run/nginx.pid \
 	&& chmod 755 /usr/local/bin/nginx-entrypoint.sh \
 	&& chmod 644 /templates/nginx/frappe.conf.template \
-	&& chmod 755 /usr/local/bin/worker.sh
+	&& chmod 755 /usr/local/bin/worker.sh \
+	&& chmod 755 /usr/local/bin/bench_server.py
 
 FROM base AS builder
 

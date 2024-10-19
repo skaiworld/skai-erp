@@ -52,3 +52,9 @@ SKAI ERP can be deployed to production server via docker. Choose an Ubuntu VM or
 - Run `docker compose -f docker.base.yml -f docker.prod.yml up -d`
 - (Remove unused images `docker image prune -a`)
 - Open port 80 to users
+
+## Others
+
+### Helpful commands for testing
+- `docker exec -u 0 -it skai-erp-frontend bash` Exec bash in container as root
+- `BENCH_SECRET=secret ADDRESS=localhost ADMIN_PASSWORD='admin' python3 ./docker/bench_server.py` ro test bench server
