@@ -8,29 +8,19 @@ SKAI Technologies ERP System
 - Add app details to `docker/apps.json` in this repo
 
 ## Testing
-- Copy `example.env` to `.env`
+- Copy `example.env` to `.env` and update if needed
 - (May need `docker builder prune -a` to clear build cache)
-```
-APPS_JSON_BASE64=$(openssl base64 -in docker/apps.json) # Mac
-# APPS_JSON_BASE64=$(base64 -w 0 docker/apps.json) # Linux
-
-docker build \
-  --build-arg=FRAPPE_PATH=https://github.com/frappe/frappe \
-  --build-arg=FRAPPE_BRANCH=version-15 \
-  --build-arg=PYTHON_VERSION=3.11.6 \
-  --build-arg=NODE_VERSION=18.18.2 \
-  --build-arg=APPS_JSON_BASE64=$APPS_JSON_BASE64 \
-  --tag=ghcr.io/skaiworld/skai-erp:develop docker
-
-docker compose -f docker.base.yml -f docker.dev.yml up -d
-```
-Check http://localhost
+- Run `./deploy.sh -e local`
+- Check http://localhost
 
 ## Production
 
 SKAI ERP can be deployed to production server via docker. Choose an Ubuntu VM or docker hosting that supports `docker-compose.yml`
 
 - Push `develop` branch or `v*` tag to Github to build and push docker image via github actions.
+- Copy `example.env` to `.env.demo` and `.env.prod` and update
+
+### First time setup
 - Copy files `scp docker.base.yml docker.prod.yml configurator.py .env ubuntu@ip:~/`
 - ssh into Ubuntu machine `ssh ubuntu@ip`
 - Edit `.env` file
@@ -49,9 +39,26 @@ SKAI ERP can be deployed to production server via docker. Choose an Ubuntu VM or
   # Temporary: Disable firewall
   # https://www.cyberciti.biz/tips/linux-iptables-how-to-flush-all-rules.html
   ```
-- Run `docker compose -f docker.base.yml -f docker.prod.yml up -d`
-- (Remove unused images `docker image prune -a`)
+- Set timezone `sudo timedatectl set-timezone Asia/Kolkata`
 - Open port 80 to users
+
+### Deployment
+- Run `./deploy.sh -e demo` or Run `./deploy.sh -e prod`
+- Run `./deploy.sh -e demo -b` or `./deploy.sh -e prod -b` to run build assets
+- Run `./deploy.sh -e demo -m` or `./deploy.sh -e prod -m` to run bench migrate
+- (Remove unused images `docker image prune -a`)
+
+## Deploy script
+`deploy.sh` is used for automating build and deployment.
+
+The default action of the deploy script is to run docker containers in the given environment. Optional arguments can be supplied to perform additional tasks.
+
+### Arguments
+- `--env, -e` (Required): Deployment environment. Eg: `-e prod`
+- `--bench-build, -b`: Run `bench build`.
+- `--bench-migrate, -m`: Run `bench migrate`
+- `--image-build, -i`: Build docker image. Only local. No effect in remmote environments.
+- `--help, -h`: Help menu.
 
 ## Others
 
