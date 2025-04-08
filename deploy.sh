@@ -67,7 +67,7 @@ if [ "$ENV" = "local" ]; then
 		--build-arg=FRAPPE_BRANCH=version-15 \
 		--build-arg=PYTHON_VERSION=3.11.6 \
 		--build-arg=NODE_VERSION=18.18.2 \
-		--build-arg=APPS_JSON_BASE64=$APPS_JSON_BASE64 \
+		--build-arg=APPS_JSON_BASE64="$APPS_JSON_BASE64" \
 		--tag=ghcr.io/skaiworld/skai-erp:develop docker;
 	fi
 

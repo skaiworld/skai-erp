@@ -180,7 +180,33 @@ services:
       - traefik.http.routers.matrix-http.rule=Host(`${DOMAIN}`) && (PathPrefix(`/_matrix`) || PathPrefix(`/_synapse`) || PathPrefix(`/.well-known/matrix`))
       - traefik.http.routers.matrix-http.entrypoints=matrix
       - traefik.http.routers.matrix-http.service=matrix
-      - traefik.http.routers.matrix-http.priority=2
+      - traefik.http.routers.matrix-http.priority=20
+
+  skyper:
+    image: ghcr.io/skaiworld/skyper:v1.0.0
+    restart: unless-stopped
+    environment:
+      SYNAPSE_SERVER_NAME: ${DOMAIN}
+      SYNAPSE_ADMIN: ${SYNAPSE_ADMIN}
+      SYNAPSE_PASSWORD: ${SYNAPSE_PASSWORD}
+      SKYPER_USER: ${SKYPER_USER}
+      SKYPER_PASSWORD: ${SKYPER_PASSWORD}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY}
+      WC_SECRET: ${WC_SECRET}
+      FRAPPE_KEY: ${FRAPPE_KEY}
+      FRAPPE_SECRET: ${FRAPPE_SECRET}
+    expose:
+      - 8002
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.skyper.loadbalancer.server.port=8002
+      - traefik.http.routers.skyper-http.rule=PathPrefix(`/skyper`)
+      - traefik.http.routers.skyper-http.entrypoints=web
+      - traefik.http.routers.skyper-http.service=skyper
+      - traefik.http.routers.skyper-http.priority=10
+    volumes:
+      - skyper:/app/db
+      - /etc/localtime:/etc/localtime:ro
 
   frontend:
     image: ghcr.io/skaiworld/skai-erp:${SKAI_VERSION}
@@ -277,5 +303,6 @@ volumes:
   logs:
   postgresdata:
   synapse-data:
+  skyper:
   mariabackup:
   pgbackup:
