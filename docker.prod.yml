@@ -8,6 +8,15 @@ services:
       - traefik.http.routers.matrix-http.tls=true
       - traefik.http.routers.matrix-http.tls.certresolver=le
 
+  skyper:
+    extends:
+      file: docker.base.yml
+      service: skyper
+    labels:
+      - traefik.http.routers.skyper-http.entrypoints=websecure
+      - traefik.http.routers.skyper-http.tls=true
+      - traefik.http.routers.skyper-http.tls.certresolver=le
+
   frontend:
     extends:
       file: docker.base.yml

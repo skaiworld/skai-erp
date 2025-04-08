@@ -78,6 +78,9 @@ services:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:?No db password set}
     volumes:
       - db-data:/var/lib/mysql
+      - mariabackup:/home
+    labels:
+      - docker-volume-backup.archive-pre=/bin/sh -c 'mariadb-dump -p${DB_PASSWORD} --all-databases > /home/db.sql'
 
   worker:
     image: ghcr.io/skaiworld/skai-erp:${SKAI_VERSION}
@@ -129,11 +132,14 @@ services:
     restart: unless-stopped
     volumes:
       - postgresdata:/var/lib/postgresql/data
+      - pgbackup:/backup
     environment:
       POSTGRES_DB: synapse
       POSTGRES_USER: synapse
       POSTGRES_PASSWORD: ${PG_PASSWORD}
       POSTGRES_INITDB_ARGS: --encoding='UTF8' --lc-collate='C' --lc-ctype='C'
+    labels:
+      - docker-volume-backup.archive-pre=/bin/sh -c 'pg_dump -U synapse synapse > /backup/db.sql'
 
   create-synapse:
     image: matrixdotorg/synapse:v1.97.0
@@ -174,7 +180,33 @@ services:
       - traefik.http.routers.matrix-http.rule=Host(`${DOMAIN}`) && (PathPrefix(`/_matrix`) || PathPrefix(`/_synapse`) || PathPrefix(`/.well-known/matrix`))
       - traefik.http.routers.matrix-http.entrypoints=matrix
       - traefik.http.routers.matrix-http.service=matrix
-      - traefik.http.routers.matrix-http.priority=2
+      - traefik.http.routers.matrix-http.priority=20
+
+  skyper:
+    image: ghcr.io/skaiworld/skyper:v1.0.0
+    restart: unless-stopped
+    environment:
+      SYNAPSE_SERVER_NAME: ${DOMAIN}
+      SYNAPSE_ADMIN: ${SYNAPSE_ADMIN}
+      SYNAPSE_PASSWORD: ${SYNAPSE_PASSWORD}
+      SKYPER_USER: ${SKYPER_USER}
+      SKYPER_PASSWORD: ${SKYPER_PASSWORD}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY}
+      WC_SECRET: ${WC_SECRET}
+      FRAPPE_KEY: ${FRAPPE_KEY}
+      FRAPPE_SECRET: ${FRAPPE_SECRET}
+    expose:
+      - 8002
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.skyper.loadbalancer.server.port=8002
+      - traefik.http.routers.skyper-http.rule=PathPrefix(`/skyper`)
+      - traefik.http.routers.skyper-http.entrypoints=web
+      - traefik.http.routers.skyper-http.service=skyper
+      - traefik.http.routers.skyper-http.priority=10
+    volumes:
+      - skyper:/app/db
+      - /etc/localtime:/etc/localtime:ro
 
   frontend:
     image: ghcr.io/skaiworld/skai-erp:${SKAI_VERSION}
@@ -242,6 +274,27 @@ services:
       - traefik.http.routers.dash.middlewares=dash-auth@docker
       - traefik.http.middlewares.dash-auth.basicauth.users=${TRAEFIK_PASS}
 
+  backup:
+    image: offen/docker-volume-backup:v2
+    restart: always
+    environment:
+      BACKUP_CRON_EXPRESSION: ${BACKUP_CRON_EXPRESSION:-0 0 31 12 *}
+      GZIP_PARALLELISM: 2
+      BACKUP_RETENTION_DAYS: 7
+      BACKUP_EXCLUDE_REGEXP: .+frappe-sites\/assets\/.+|.+private\/backups\/.+
+      DROPBOX_REMOTE_PATH: /desk-backup
+      DROPBOX_APP_KEY: ${DROPBOX_APP_KEY}
+      DROPBOX_APP_SECRET: ${DROPBOX_APP_SECRET}
+      DROPBOX_REFRESH_TOKEN: ${DROPBOX_REFRESH_TOKEN}
+    volumes:
+      - mariabackup:/backup/frappe-db:ro
+      - sites:/backup/frappe-sites:ro
+      - logs:/backup/frappe-logs:ro
+      - pgbackup:/backup/matrix-db:ro
+      - synapse-data:/backup/matrix-files:ro
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
 volumes:
   db-data:
   redis-queue-data:
@@ -250,3 +303,6 @@ volumes:
   logs:
   postgresdata:
   synapse-data:
+  skyper:
+  mariabackup:
+  pgbackup:
