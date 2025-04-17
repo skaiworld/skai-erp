@@ -15,8 +15,16 @@ while [ $# -gt 0 ]; do
 	--image-build*|-i*)
 		IMAGE=1
 		;;
+	--stop*|-s*)
+		STOP=1
+		;;
 	--help|-h)
 	  echo "./deploy.sh -e demo -b -m -i -h";
+	  echo "-e local -> Specify Environment";
+	  echo "-b -> Bench build";
+	  echo "-m -> Bnech migrate";
+	  echo "-i -> Build Image (Only in local)";
+	  echo "-h -> Show Help";
 	  exit 0
 	  ;;
 	*)
@@ -30,6 +38,13 @@ done
 if [ -z "$ENV" ]; then
 	echo Specify environment;
 	echo Eg: ./deploy.sh -e local;
+	exit 1;
+fi
+
+if [ "$STOP" = 1 ]; then
+	echo Stopping $ENV;
+	docker compose -f docker.base.yml -f docker.dev.yml stop;
+	# Todo: Enable stopping demo and prod?
 	exit 1;
 fi
 
